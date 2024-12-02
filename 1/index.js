@@ -1,0 +1,17 @@
+//Test
+const tl1 = [3,4,2,1,3,3].sort((a,b) => a-b)
+const tl2 = [4,3,5,3,9,3].sort((a,b) => a-b)
+const tl3 = tl1.map((num, i) => Math.abs(num - tl2[i]))
+const tsum = tl3.reduce((acc, num) => acc + num, 0)
+console.log("Test Summarize",tsum)
+const fs = require('fs')
+const path = require('path')
+const filePath = path.join(__dirname, 'input')
+const data = fs.readFileSync(filePath, 'utf8')
+const lines = data.split('\n')
+const arr1 = lines.map(line => parseInt(line.split('   ')[0])).sort((a,b) => a-b)
+const arr2 = lines.map(line => parseInt(line.split('   ')[1])).sort((a,b) => a-b)
+const diffArr = arr1.map((num, i) => Math.abs(num - arr2[i]))
+const sum = diffArr.reduce((acc, num) => acc + num, 0)
+console.log("Summarize",sum)
+
