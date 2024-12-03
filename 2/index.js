@@ -46,7 +46,29 @@ const trainingData = [
 
 net.train(trainingData);
 
+const testInput =[
+[7, 6, 4, 2, 1],
+[1, 2, 7, 8, 9],
+[9, 7, 6, 2, 1],
+[1, 3, 2, 4, 5],
+[8, 6, 4, 4, 1],
+[1, 3, 6, 7, 9]
+]
+
+//run on each test input
+const output = testInput.map(input => {
+    const normalized = normalize(input, inputLength);
+    return {
+        input: input,
+        normalized: normalized,
+        output: net.run(normalized)
+    };
+});
+
+
+/*
 const input = normalize([70, 68, 75, 77, 80, 81, 84], inputLength);
 
 const output = net.run(input);
+*/
 console.log(output);
