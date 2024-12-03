@@ -1,0 +1,11 @@
+{
+  "name": "puzzle2overengineered",
+  "version": "1.0.0",
+  "description": "to solve advent calendar 2024 puzzle 2, just because",
+  "main": "index.js",
+  "author": "Panagiotis Skarvelis",
+  "license": "MIT",
+  "dependencies": {
+    "brain.js": "^1.6.1"
+  }
+}
