@@ -15,3 +15,8 @@ const diffArr = arr1.map((num, i) => Math.abs(num - arr2[i]))
 const sum = diffArr.reduce((acc, num) => acc + num, 0)
 console.log("Summarize",sum)
 
+const sarr1 = lines.map(line => parseInt(line.split('   ')[0]))
+const sarr2 = lines.map(line => parseInt(line.split('   ')[1]))
+const arr3 = sarr1.map((num, i) => num * sarr2.filter(n => n === num).length)
+const ssum = arr3.reduce((acc, num) => acc + num, 0)
+console.log("Similarity",ssum)
