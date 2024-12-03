@@ -26,3 +26,23 @@ for (let i = 0; i < result.length; i++) {
 }
 let sum2 = arr2.reduce((a, b) => a + b, 0);
 console.log("Sum", sum2) 
+
+let regex2 = /mul\((\d+),(\d+)\)|do\(\)|don\'t\(\)/g;
+let result2 = str.match(regex2);
+console.log(result2.join(" "));
+
+let arr3 = [];
+let ignore = false;
+for (let i = 0; i < result2.length; i++) {
+    if (result2[i].includes("do()")) {
+        ignore = false;
+    } else if (result2[i].includes("don't()")) {
+        ignore = true;
+    } else if (!ignore) {
+        let temp = result2[i].match(/\d+/g);
+        temp = temp[0] * temp[1];
+        arr3.push(temp);
+    }
+}
+let sum3 = arr3.reduce((a, b) => a + b, 0);
+console.log("Sum do", sum3)
