@@ -1,6 +1,6 @@
 const fs = require('fs');
 const brain = require('brain.js');
-const net = new brain.NeuralNetwork();
+
 
 // Function to normalize arrays
 function normalize(array, length) {
@@ -22,29 +22,11 @@ function normalize(array, length) {
 // Define the desired input length
 const inputLength = 8;
 
-//import data.txt and parse it as trainingData 
-//data.txt contains a list of numbers separated by space and a comma, followed by the "Safe" or "Unsafe" label
-const trainingData = fs.readFileSync('data.txt', 'utf8').split('\n').map(line => {
-    const parts = line.split(',');
-    const input = parts[0].split(' ').map(Number);
-    const output = parts[1].trim();
-    return {
-        input: normalize(input, inputLength),
-        output: { [output]: 1 }
-    };
-});
-/*
-const trainingData = [
-    { input: normalize([44, 47, 50, 51, 53, 54, 53], inputLength), output: { Unsafe: 1 } },
-    { input: normalize([70, 73, 75, 77, 80, 81, 84], inputLength), output: { Unsafe: 1 } },
-    { input: normalize([1, 3, 4, 7, 10, 13, 16], inputLength), output: { Safe: 1 } },
-    { input: normalize([47, 49, 52, 53, 55, 57, 60], inputLength), output: { Safe: 1 } },
-    { input: normalize([69, 70, 71, 70, 71], inputLength), output: { Unsafe: 1 } }, // This will be padded
-    { input: normalize([22, 23, 20, 21, 24, 27, 24], inputLength), output: { Unsafe: 1 } }
-];
-*/
+const net = new brain.NeuralNetwork();
+//load the trained model model.json
+const model = fs.readFileSync('model.json', 'utf8');
+net.fromJSON(JSON.parse(model));
 
-net.train(trainingData);
 
 const testInput =[
 [7, 6, 4, 2, 1],
@@ -71,4 +53,34 @@ const input = normalize([70, 68, 75, 77, 80, 81, 84], inputLength);
 
 const output = net.run(input);
 */
-console.log(output);
+//read the file "input.txt" and parse it
+//input.txt contains a list of numbers separated by space
+
+const input = fs.readFileSync('input', 'utf8').split('\n').map(line => {
+    const parts = line.split(' ').map(Number);
+    return parts;
+}
+);
+
+//run on each input
+const output2 = input.map(input => {
+    const normalized = normalize(input, inputLength);
+    return {
+        input: input,
+        normalized: normalized,
+        output: net.run(normalized)
+    };
+});
+
+//now on count on output2 how many are safe and how many are unsafe
+let safe = 0;
+let unsafe = 0;
+output2.forEach(element => {
+    if (element.output.Safe > element.output.Unsafe) {
+        safe++;
+    } else {
+        unsafe++;
+    }
+});
+
+console.log(`Safe: ${safe}, Unsafe: ${unsafe}`);

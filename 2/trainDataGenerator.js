@@ -29,9 +29,9 @@ function generateLevels(isIncreasing, length) {
 
     // For decreasing sequences, start at a higher number to prevent going below 1
     if (isIncreasing) {
-        level = Math.floor(Math.random() * 10) + 1; // Start level between 1 and 10
+        level = Math.floor(Math.random() * 90) + 1; // Start level between 1 and 90
     } else {
-        level = Math.floor(Math.random() * 10) + length * 3; // Start level higher to avoid negative levels
+        level = Math.floor(Math.random() * 15) + length * 3; // Start level higher to avoid negative levels
     }
     levels.push(level);
 
@@ -69,7 +69,7 @@ function generateLevels(isIncreasing, length) {
 
 // Generate data according to the rules
 const data = [];
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 2000000; i++) {
     const isSafe = Math.random() > 0.5;
     const length = Math.floor(Math.random() * 4) + 5; // Length between 5 and 8
 
@@ -82,18 +82,18 @@ for (let i = 0; i < 10000; i++) {
     } else {
         // Generate unsafe data that violates the rules
         levels = [];
-        let level = Math.floor(Math.random() * 10) + 1;
+        let level = Math.floor(Math.random() * 90) + 1;
         levels.push(level);
 
         for (let j = 1; j < length; j++) {
             const action = Math.random();
             let change = Math.floor(Math.random() * 3) + 1;
 
-            if (action < 0.3) {
+            if (action < 0.1) {
                 // Introduce no change (equal adjacent levels)
                 // Level remains the same
                 levels.push(level);
-            } else if (action < 0.6) {
+            } else  {
                 // Change direction or make invalid change
                 if (Math.random() > 0.5) {
                     // Change direction
@@ -117,9 +117,6 @@ for (let i = 0; i < 10000; i++) {
                         }
                     }
                 }
-                levels.push(level);
-            } else {
-                // Valid change but introduce a zero difference (invalid)
                 levels.push(level);
             }
         }
