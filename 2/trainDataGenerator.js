@@ -27,12 +27,8 @@ function generateLevels(isIncreasing, length) {
     let levels = [];
     let level;
 
-    // For decreasing sequences, start at a higher number to prevent going below 1
-    if (isIncreasing) {
-        level = Math.floor(Math.random() * 90) + 1; // Start level between 1 and 90
-    } else {
-        level = Math.floor(Math.random() * 15) + length * 3; // Start level higher to avoid negative levels
-    }
+    // Start level between 10 and 90 to prevent going out of bounds
+    level = Math.floor(Math.random() * 80) + 10;
     levels.push(level);
 
     for (let i = 1; i < length; i++) {
@@ -40,28 +36,76 @@ function generateLevels(isIncreasing, length) {
 
         if (isIncreasing) {
             level += change;
+            if (level > 99) level = 99;
         } else {
             level -= change;
-            if (level < 1) {
-                level = 1;
-            }
+            if (level < 1) level = 1;
         }
 
         // Ensure that adjacent levels are not equal
-        while (level === levels[levels.length - 1]) {
-            // Adjust the change to avoid equal adjacent numbers
-            change = Math.floor(Math.random() * 3) + 1;
-            if (isIncreasing) {
-                level += change;
-            } else {
-                level -= change;
-                if (level < 1) {
-                    level = 1;
-                }
-            }
+        if (level === levels[levels.length - 1]) {
+            level += isIncreasing ? 1 : -1;
+            if (level < 1) level = 1;
+            if (level > 99) level = 99;
         }
 
         levels.push(level);
+    }
+
+    return levels;
+}
+
+function generateUnsafeLevels(length) {
+    let levels = [];
+    let level = Math.floor(Math.random() * 80) + 10;
+    levels.push(level);
+
+    let direction = null; // null, 'increasing', or 'decreasing'
+
+    for (let i = 1; i < length; i++) {
+        const violationType = Math.random();
+
+        if (violationType < 0.33) {
+            // **Violation 1:** Equal adjacent levels
+            // Keep the same level
+            levels.push(level);
+        } else if (violationType < 0.66) {
+            // **Violation 2:** Large difference (>3)
+            let change = Math.floor(Math.random() * 5) + 4; // Change of 4 to 8
+            if (Math.random() > 0.5) {
+                level += change;
+            } else {
+                level -= change;
+            }
+            if (level < 1) level = 1;
+            if (level > 99) level = 99;
+            levels.push(level);
+        } else {
+            // **Violation 3:** Change direction
+            let change = Math.floor(Math.random() * 3) + 1; // Change of 1 to 3
+
+            // Randomly decide to switch direction
+            if (direction === 'increasing') {
+                level -= change;
+                direction = 'decreasing';
+            } else if (direction === 'decreasing') {
+                level += change;
+                direction = 'increasing';
+            } else {
+                // First step, randomly choose direction
+                if (Math.random() > 0.5) {
+                    level += change;
+                    direction = 'increasing';
+                } else {
+                    level -= change;
+                    direction = 'decreasing';
+                }
+            }
+
+            if (level < 1) level = 1;
+            if (level > 99) level = 99;
+            levels.push(level);
+        }
     }
 
     return levels;
@@ -72,59 +116,21 @@ const data = [];
 for (let i = 0; i < 2000000; i++) {
     const isSafe = Math.random() > 0.5;
     const length = Math.floor(Math.random() * 4) + 5; // Length between 5 and 8
-
-    let levels;
+    let levels = [];
 
     if (isSafe) {
-        // Levels are strictly increasing or strictly decreasing by 1 to 3
+        // Generate a safe sequence
         const isIncreasing = Math.random() > 0.5;
         levels = generateLevels(isIncreasing, length);
     } else {
-        // Generate unsafe data that violates the rules
-        levels = [];
-        let level = Math.floor(Math.random() * 90) + 1;
-        levels.push(level);
-
-        for (let j = 1; j < length; j++) {
-            const action = Math.random();
-            let change = Math.floor(Math.random() * 3) + 1;
-
-            if (action < 0.1) {
-                // Introduce no change (equal adjacent levels)
-                // Level remains the same
-                levels.push(level);
-            } else  {
-                // Change direction or make invalid change
-                if (Math.random() > 0.5) {
-                    // Change direction
-                    if (Math.random() > 0.5) {
-                        level += change;
-                    } else {
-                        level -= change;
-                        if (level < 1) {
-                            level = 1;
-                        }
-                    }
-                } else {
-                    // Make a change larger than 3 (invalid)
-                    change = Math.floor(Math.random() * 5) + 4; // Change of 4 to 8
-                    if (Math.random() > 0.5) {
-                        level += change;
-                    } else {
-                        level -= change;
-                        if (level < 1) {
-                            level = 1;
-                        }
-                    }
-                }
-                levels.push(level);
-            }
-        }
+        // Generate an unsafe sequence by introducing violations
+        levels = generateUnsafeLevels(length);
     }
 
     const label = isSafe ? 'Safe' : 'Unsafe';
-    data.push(`${levels.join(' ')},${label}`);
+    data.push(`${levels.join(' ')} ${label}`);
 }
 
 fs.writeFileSync('data.txt', data.join('\n'));
 console.log('Data generated!');
+
