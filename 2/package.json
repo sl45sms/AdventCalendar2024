@@ -5,6 +5,12 @@
   "main": "index.js",
   "author": "Panagiotis Skarvelis",
   "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "node trainDataGenerator.js",
+    "train": "node train2model.js",
+    "solve": "node index.js"
+  },
   "dependencies": {
     "brain.js": "^1.6.1"
   }
