@@ -128,7 +128,7 @@ for (let i = 0; i < 2000000; i++) {
     }
 
     const label = isSafe ? 'Safe' : 'Unsafe';
-    data.push(`${levels.join(' ')} ${label}`);
+    data.push(`${levels.join(' ')},${label}`);
 }
 
 fs.writeFileSync('data.txt', data.join('\n'));
